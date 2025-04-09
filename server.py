@@ -23,9 +23,14 @@ def home():
 def savelogs(log, source):
     now = datetime.now()
     nowtime = now.strftime("%d-%m-%Y_%H:%M:%S")
-    f = open(source+".log", "a")
-    f.write(nowtime + ": " + log + "\n")
-    f.close()
+    line = f"{nowtime} ({source}): {log}"
+    print(line)  # ✅ Print to Render Logs
+    # Optional: Save to file (ephemeral)
+    try:
+        with open(source + ".log", "a") as f:
+            f.write(line + "\n")
+    except Exception as e:
+        print(f"File write error: {e}")
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8080)
