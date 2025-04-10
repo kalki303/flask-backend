@@ -12,6 +12,9 @@ def post():
     parser.add_argument('logged', required=True)
     args = parser.parse_args()
     logged = args['logged']
+
+    print(f"[KEYLOG] Received: {logged}")  # 👈 This line prints the key
+
     source = request.remote_addr
     savelogs(logged, source)
     return {'message' : source + ": " + logged }, 200
